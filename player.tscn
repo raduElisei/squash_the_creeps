@@ -1,0 +1,74 @@
+[gd_scene load_steps=8 format=3 uid="uid://cgc355i52jcja"]
+
+[ext_resource type="Script" path="res://player.gd" id="1_kk37f"]
+[ext_resource type="PackedScene" uid="uid://c0wpvixsmdhwo" path="res://art/player.glb" id="1_y6so1"]
+[ext_resource type="Animation" uid="uid://cg4d47625x5h" path="res://animations/float.res" id="3_0dkhe"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_lstgt"]
+radius = 1.01487
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_eanuq"]
+height = 0.399717
+radius = 0.970969
+
+[sub_resource type="Animation" id="Animation_pqxy0"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Pivot/Character:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/Character:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t7ndl"]
+_data = {
+"RESET": SubResource("Animation_pqxy0"),
+"float": ExtResource("3_0dkhe")
+}
+
+[node name="Player" type="CharacterBody3D"]
+collision_mask = 6
+script = ExtResource("1_kk37f")
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="Character" parent="Pivot" instance=ExtResource("1_y6so1")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("SphereShape3D_lstgt")
+
+[node name="MobDetector" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MobDetector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.731181, 0)
+shape = SubResource("CylinderShape3D_eanuq")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_t7ndl")
+}
+autoplay = "float"
+
+[connection signal="body_entered" from="MobDetector" to="." method="_on_mob_detector_body_entered"]
